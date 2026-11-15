@@ -1,0 +1,11 @@
+entrypoint = ["/bin/bash"]
+
+cpus = 2
+memory = 512
+net = true
+
+[dev]
+volumes = [
+    ".:/workspace"
+]
+

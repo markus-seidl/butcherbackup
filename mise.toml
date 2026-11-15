@@ -1,0 +1,15 @@
+
+[tools]
+node = "latest"
+opencode = "latest"
+go = "latest"
+
+
+[tasks.build_dev_vm]
+run = "cp mise.toml ./tools/dev-docker-image/ && cd ./tools/dev-docker-image/ && docker build . --tag butcherbackup_dev_vm "
+
+[tasks.create_dev_vm]
+run = "docker save butcherbackup_dev_vm | smolvm machine create --name butcherbackup_dev_vm --image - --smolfile ./tools/dev-vm/dev_vm.smolfile "
+
+[tasks.start_dev_vm]
+run = "smolvm machine start --name butcherbackup_dev_vm "
