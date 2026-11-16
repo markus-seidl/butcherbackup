@@ -3,6 +3,7 @@
 node = "latest"
 opencode = "latest"
 go = "latest"
+copilot-cli = "latest"
 
 
 [tasks.build_dev_vm]

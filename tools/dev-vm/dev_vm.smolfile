@@ -1,7 +1,7 @@
 entrypoint = ["/bin/bash"]
 
 cpus = 2
-memory = 512
+memory = 4096
 net = true
 
 [dev]
