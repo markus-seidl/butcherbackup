@@ -7,6 +7,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -33,10 +35,11 @@ type Parser struct {
 	commands []Command
 	out      io.Writer
 	errOut   io.Writer
+	log      zerolog.Logger
 }
 
-func NewParser(name string) *Parser {
-	return &Parser{name: name, out: os.Stdout, errOut: os.Stderr}
+func NewParser(name string, log zerolog.Logger) *Parser {
+	return &Parser{name: name, out: os.Stdout, errOut: os.Stderr, log: log}
 }
 
 func (p *Parser) Register(cmd Command) {
@@ -67,7 +70,7 @@ func (p *Parser) usage(w io.Writer) {
 // Run dispatches args (without the program name) and returns the exit code.
 func (p *Parser) Run(args []string) int {
 	if len(args) == 0 {
-		fmt.Fprintln(p.errOut, "error: no command given")
+		p.log.Error().Msg("error: no command given")
 		p.usage(p.errOut)
 		return ExitUsage
 	}
@@ -78,7 +81,7 @@ func (p *Parser) Run(args []string) int {
 	}
 	cmd := p.find(args[0])
 	if cmd == nil {
-		fmt.Fprintf(p.errOut, "error: unknown command %q\n", args[0])
+		p.log.Error().Msgf("error: unknown command %q", args[0])
 		p.usage(p.errOut)
 		return ExitUsage
 	}
@@ -90,7 +93,7 @@ func (p *Parser) Run(args []string) int {
 	case errors.As(err, &usageErr):
 		return ExitUsage
 	default:
-		fmt.Fprintf(p.errOut, "error: %v\n", err)
+		p.log.Error().Msgf("error: %v", err)
 		return ExitFailure
 	}
 }
@@ -98,32 +101,43 @@ func (p *Parser) Run(args []string) int {
 // NewFlagSet creates a flag set for a command with usage text that names the command.
 func NewFlagSet(cmd Command, synopsis string) *flag.FlagSet {
 	fs := flag.NewFlagSet(cmd.Name(), flag.ContinueOnError)
+	fs.SetOutput(os.Stderr)
 	fs.Usage = func() {
-		out := fs.Output()
+		out := os.Stderr
 		fmt.Fprintf(out, "%s\n\nUsage: %s %s\n\nArguments:\n", cmd.Description(), cmd.Name(), synopsis)
 		fs.PrintDefaults()
 	}
 	return fs
 }
 
-// Parse parses args; flag.ErrHelp is returned as is, other failures become UsageError.
-func Parse(fs *flag.FlagSet, args []string) error {
-	if err := fs.Parse(args); err != nil {
+// Parse parses args; flag.ErrHelp is returned as is, other failures are logged
+// and become UsageError. The flag package's own error output is suppressed.
+func Parse(fs *flag.FlagSet, log zerolog.Logger, args []string) error {
+	usage := fs.Usage
+	fs.SetOutput(io.Discard)
+	fs.Usage = func() {}
+	err := fs.Parse(args)
+	fs.SetOutput(os.Stderr)
+	fs.Usage = usage
+	if err != nil {
 		if errors.Is(err, flag.ErrHelp) {
+			fs.Usage()
 			return err
 		}
+		log.Error().Msgf("error: %v", err)
+		fs.Usage()
 		return &UsageError{Err: err}
 	}
 	return nil
 }
 
 // RequireFlags returns a UsageError naming the first required flag that was not set.
-func RequireFlags(fs *flag.FlagSet, names ...string) error {
+func RequireFlags(fs *flag.FlagSet, log zerolog.Logger, names ...string) error {
 	set := map[string]bool{}
 	fs.Visit(func(f *flag.Flag) { set[f.Name] = true })
 	for _, n := range names {
 		if !set[n] {
-			fmt.Fprintf(fs.Output(), "error: missing required argument --%s\n", n)
+			log.Error().Msgf("error: missing required argument --%s", n)
 			fs.Usage()
 			return &UsageError{Err: fmt.Errorf("missing required argument --%s", n)}
 		}

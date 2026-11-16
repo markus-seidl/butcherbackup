@@ -6,11 +6,13 @@ import (
 	"butcherbackup/internal/cli"
 	"butcherbackup/internal/commands/backup"
 	"butcherbackup/internal/commands/restore"
+	"butcherbackup/internal/logging"
 )
 
 func main() {
-	p := cli.NewParser("butcherbackup")
-	p.Register(backup.New())
-	p.Register(restore.New())
+	log := logging.New(os.Stderr)
+	p := cli.NewParser("butcherbackup", log)
+	p.Register(backup.New(log))
+	p.Register(restore.New(log))
 	os.Exit(p.Run(os.Args[1:]))
 }
