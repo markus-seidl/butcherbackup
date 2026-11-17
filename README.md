@@ -19,3 +19,9 @@ butcherbackup restore --backup /mnt/disk1 --target /restore [file]...
 ```
 
 `backup` and `restore` are skeletons for now: they parse their arguments and report that they are not implemented yet.
+
+
+# Tools
+
+* https://manpages.ubuntu.com/manpages/stonking/man1/dar.1.html
+* 
