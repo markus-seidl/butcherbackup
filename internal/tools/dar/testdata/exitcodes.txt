@@ -1,0 +1,12 @@
+create_v exit=0
+create_diff_v exit=0
+extract_v exit=0
+restore_corrupt exit=5
+slicing_listing exit=0
+slicing_diff exit=0
+slicing_diff_listing exit=0
+missing_slice exit=0
+missing_archive exit=4
+nonexistent_root exit=2
+hook_failed exit=6
+save_denied exit=5

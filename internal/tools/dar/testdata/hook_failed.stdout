@@ -1,0 +1,22 @@
+Creating low layer: Writing archive into a sar object (Segmentation and Reassembly) for slicing...
+Adding a new layer on top: Caching layer for better performances...
+Writing down the archive header...
+Adding a new layer on top: Escape layer to allow sequential reading...
+Adding a streamed compression layer
+All layers have been created successfully
+Building the catalog object...
+Processing files for backup...
+Adding file to archive: /work/src2/top
+Saving Filesystem Specific Attributes for /work/src2/top
+Adding folder to archive: /work/src2/d
+Saving Filesystem Specific Attributes for /work/src2/d
+Adding file to archive: /work/src2/d/f1
+Saving Filesystem Specific Attributes for /work/src2/d/f1
+Adding file to archive: /work/src2/d/hard
+Saving Filesystem Specific Attributes for /work/src2/d/hard
+Adding named pipe to archive: /work/src2/d/fifo
+Adding folder to archive: /work/src2/my dir
+Saving Filesystem Specific Attributes for /work/src2/my dir
+Adding file to archive: /work/src2/my dir/big file.bin
+Aborting due to exception: Fatal error on user command line: Ignore previous error on user command line and continue ?
+Final memory cleanup

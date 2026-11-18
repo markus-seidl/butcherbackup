@@ -38,6 +38,9 @@ func TestValidationErrors(t *testing.T) {
 		{"exclude mask on isolate", NewBuilder().Isolate("c").Reference("a").ExcludeMask("*.txt"), "filters apply only to create, extract and list"},
 		{"include path on isolate", NewBuilder().Isolate("c").Reference("a").IncludePath("a"), "filters apply only to create, extract and list"},
 		{"exclude path on isolate", NewBuilder().Isolate("c").Reference("a").ExcludePath("a"), "filters apply only to create, extract and list"},
+		{"empty slice hook", NewBuilder().Create("a").ExecuteBetweenSlices(""), "slice hook (-E): command is empty"},
+		{"empty reference hook", NewBuilder().Create("a").Reference("r").ExecuteBetweenReferenceSlices(""), "reference slice hook (-F): command is empty"},
+		{"reference hook without reference", NewBuilder().Create("a").ExecuteBetweenReferenceSlices("x"), "the reference slice hook (-F) requires a reference archive"},
 		{"root on list", NewBuilder().List("a").Root("/r"), "the root directory applies only to create and extract"},
 		{"root on isolate", NewBuilder().Isolate("c").Reference("a").Root("/r"), "the root directory applies only to create and extract"},
 	}
@@ -81,6 +84,7 @@ func TestValidCombinations(t *testing.T) {
 		"list slicing":         NewBuilder().List("a").Format(FormatSlicing).Reference("cat"),
 		"create with filters":  NewBuilder().Create("a").Root("/r").IncludeMask("*.go").ExcludeMask("*_test.go").IncludePath("src").ExcludePath("src/gen"),
 		"extract with filter":  NewBuilder().Extract("a").Root("/r").IncludePath("src/main.go"),
+		"hooks with reference": NewBuilder().Extract("a").Reference("cat").ExecuteBetweenSlices("e").ExecuteBetweenReferenceSlices("f"),
 		"list with filters":    NewBuilder().List("a").IncludePath("src").ExcludeMask("*.log"),
 	}
 	for name, b := range builders {
@@ -91,7 +95,7 @@ func TestValidCombinations(t *testing.T) {
 }
 
 func TestSeveralErrorsReportedTogether(t *testing.T) {
-	_, err := NewBuilder().Isolate("cat").Root("/r").SliceSize("bad").Format("json").Compress("lz4", 0).IncludePath("/abs").IncludeMask("").Build()
+	_, err := NewBuilder().Isolate("cat").Root("/r").SliceSize("bad").Format("json").Compress("lz4", 0).IncludePath("/abs").IncludeMask("").ExecuteBetweenSlices("").ExecuteBetweenReferenceSlices("x").Build()
 	if err == nil {
 		t.Fatal("Build() succeeded, want errors")
 	}
@@ -104,6 +108,8 @@ func TestSeveralErrorsReportedTogether(t *testing.T) {
 		`path "/abs" must be relative`,
 		"include mask (-I): value is empty",
 		"filters apply only to create, extract and list",
+		"slice hook (-E): command is empty",
+		"the reference slice hook (-F) requires a reference archive",
 	} {
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("error %q is missing %q", err, want)

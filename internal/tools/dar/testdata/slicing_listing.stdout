@@ -1,0 +1,15 @@
+Slice(s)|[Data ][D][ EA  ][FSA][Compr][S]|Permission| Filemane
+--------+--------------------------------+----------+-----------------------------
+1	 [Saved][ ]       [-L-][     ][ ] -rw-r--r-- top
+1	 [Saved][-]       [-L-][   0%][ ] drwxr-xr-x d
+1	 [Saved][ ]       [-L-][     ][ ] -rw-r--r-- d/f1
+	 [Saved][-]       [---][-----][ ] lrwxrwxrwx d/sym
+1	 [Saved][ ]       [-L-][     ][ ] -rw-r--r-- d/hard
+	 [Saved][-]       [---][-----][ ] prw-r--r-- d/fifo
+1	 [Saved][-]       [-L-][   0%][ ] drwxr-xr-x my dir
+1-4	 [Saved][ ]       [-L-][     ][ ] -rw-r--r-- my dir/big file.bin
+4	 [Saved][-]       [-L-][   0%][ ] drwxr-xr-x my dir/sub
+4	 [Saved][ ]       [-L-][     ][ ] -rw-r--r-- my dir/sub/we ird: name.txt
+-----
+All displayed files have their data in slice range [1-4]
+-----

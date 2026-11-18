@@ -1,0 +1,48 @@
+Opening archive a ...
+Opening the archive using the multi-slice abstraction layer...
+Reading the archive trailer...
+Opening construction layer...
+Considering cyphering layer...
+No cyphering layer opened
+Opening escape sequence abstraction layer...
+Opening the compression abstraction layer (compression algorithm used is none)...
+streamed compression layer open (single threaded)
+All layers have been created successfully
+Loading catalogue into memory...
+Locating archive contents...
+Reading archive contents...
+Restoring file's data: /work/out3/top
+Restoring file's FSA: /work/out3/top
+Restoring file's data: /work/out3/d
+Restoring file's FSA: /work/out3/d
+Restoring file's data: /work/out3/d/f1
+Restoring file's FSA: /work/out3/d/f1
+Restoring file's data: /work/out3/d/sym
+Restoring file's data: /work/out3/d/hard
+Restoring file's FSA: /work/out3/d/hard
+Restoring file's data: /work/out3/d/fifo
+Restoring file's data: /work/out3/my dir
+Restoring file's FSA: /work/out3/my dir
+Restoring file's data: /work/out3/my dir/big file.bin
+/work/out3/my dir/big file.bin not restored (user choice)
+Restoring file's data: /work/out3/my dir/sub
+Restoring file's FSA: /work/out3/my dir/sub
+Restoring file's data: /work/out3/my dir/sub/we ird: name.txt
+Restoring file's FSA: /work/out3/my dir/sub/we ird: name.txt
+
+
+ --------------------------------------------
+ 9 inode(s) restored
+    including 0 hard link(s)
+ 0 inode(s) not restored (not saved in archive)
+ 0 inode(s) not restored (overwriting policy decision)
+ 1 inode(s) ignored (excluded by filters)
+ 0 inode(s) failed to restore (filesystem error)
+ 0 inode(s) deleted
+ --------------------------------------------
+ Total number of inode(s) considered: 10
+ --------------------------------------------
+ EA restored for 0 inode(s)
+ FSA restored for 0 inode(s)
+ --------------------------------------------
+Final memory cleanup...

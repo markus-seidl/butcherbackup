@@ -69,6 +69,16 @@ func TestArgs(t *testing.T) {
 			NewBuilder().List("a").IncludePath("p").Format(FormatTree).Verbose(),
 			[]string{"-l", "a", "-v", "-Ttree", "-g", "p"},
 		},
+		{"slice hook", NewBuilder().Create("a").ExecuteBetweenSlices("echo %n >> /tmp/slices.log"), []string{"-c", "a", "-E", "echo %n >> /tmp/slices.log"}},
+		{"slice hook on extract", NewBuilder().Extract("a").ExecuteBetweenSlices("mount.sh %n %c"), []string{"-x", "a", "-E", "mount.sh %n %c"}},
+		{"slice hook on list", NewBuilder().List("a").ExecuteBetweenSlices("x"), []string{"-l", "a", "-E", "x"}},
+		{"slice hook on isolate", NewBuilder().Isolate("c").Reference("a").ExecuteBetweenSlices("x"), []string{"-C", "c", "-A", "a", "-E", "x"}},
+		{"reference slice hook", NewBuilder().Extract("a").Reference("cat").ExecuteBetweenReferenceSlices("mount-catalog.sh %n"), []string{"-x", "a", "-A", "cat", "-F", "mount-catalog.sh %n"}},
+		{
+			"both hooks come last, -E before -F",
+			NewBuilder().ExecuteBetweenReferenceSlices("f").ExecuteBetweenSlices("e").Create("a").Reference("r").IncludePath("p").Format(FormatNone).Verbose(),
+			[]string{"-c", "a", "-A", "r", "-v", "-g", "p", "-E", "e", "-F", "f"},
+		},
 		{
 			"list with first slice header",
 			NewBuilder().List("a").FirstSliceHeader().Verbose().Format(FormatSlicing),

@@ -1,9 +1,11 @@
 package dar
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"slices"
+	"strings"
 	"testing"
 )
 
@@ -98,5 +100,61 @@ func TestRunDefaultsToExecRunner(t *testing.T) {
 	cmd := mustBuild(t, NewBuilder().Create("a").Binary("/nonexistent/dar"))
 	if _, err := cmd.Run(context.Background(), nil); err == nil {
 		t.Error("Run(nil runner) succeeded, want error from missing binary")
+	}
+}
+
+func TestExecRunnerForwardsOutput(t *testing.T) {
+	var out, errOut bytes.Buffer
+	runner := ExecRunner{Stdout: &out, Stderr: &errOut}
+	res, err := runner.Run(context.Background(), "sh", []string{"-c", "echo out; echo err >&2; exit 2"})
+	if err != nil {
+		t.Fatalf("Run() error: %v", err)
+	}
+	if out.String() != "out\n" || errOut.String() != "err\n" {
+		t.Errorf("forwarded out=%q err=%q", out.String(), errOut.String())
+	}
+	if res.Stdout != "out\n" || res.Stderr != "err\n" || res.ExitCode != 2 {
+		t.Errorf("result = %+v, want output captured too", res)
+	}
+}
+
+func TestExecRunnerForwardsWhileRunning(t *testing.T) {
+	seen := make(chan string, 1)
+	pr := &signalWriter{seen: seen, want: "first"}
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		ExecRunner{Stdout: pr}.Run(context.Background(), "sh", []string{"-c", "echo first; sleep 1; echo second"})
+	}()
+	select {
+	case <-seen:
+	case <-done:
+		t.Fatal("output was only forwarded after the command finished")
+	}
+	<-done
+}
+
+type signalWriter struct {
+	seen chan string
+	want string
+	sent bool
+}
+
+func (w *signalWriter) Write(p []byte) (int, error) {
+	if !w.sent && strings.Contains(string(p), w.want) {
+		w.sent = true
+		w.seen <- w.want
+	}
+	return len(p), nil
+}
+
+func TestExecRunnerForwardOnlyStdout(t *testing.T) {
+	var out bytes.Buffer
+	res, err := ExecRunner{Stdout: &out}.Run(context.Background(), "sh", []string{"-c", "echo out; echo err >&2"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out.String() != "out\n" || res.Stderr != "err\n" {
+		t.Errorf("out=%q result=%+v", out.String(), res)
 	}
 }

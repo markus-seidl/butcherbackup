@@ -1,0 +1,49 @@
+Opening archive a ...
+Opening the archive using the multi-slice abstraction layer...
+Reading the archive trailer...
+Opening construction layer...
+Considering cyphering layer...
+No cyphering layer opened
+Opening escape sequence abstraction layer...
+Opening the compression abstraction layer (compression algorithm used is none)...
+streamed compression layer open (single threaded)
+All layers have been created successfully
+Loading catalogue into memory...
+Locating archive contents...
+Reading archive contents...
+Restoring file's data: /work/out2/top
+Restoring file's FSA: /work/out2/top
+Restoring file's data: /work/out2/d
+Restoring file's FSA: /work/out2/d
+Restoring file's data: /work/out2/d/f1
+Restoring file's FSA: /work/out2/d/f1
+Restoring file's data: /work/out2/d/sym
+Restoring file's data: /work/out2/d/hard
+Restoring file's FSA: /work/out2/d/hard
+Restoring file's data: /work/out2/d/fifo
+Restoring file's data: /work/out2/my dir
+Restoring file's FSA: /work/out2/my dir
+Restoring file's data: /work/out2/my dir/big file.bin
+Error while restoring /work/out2/my dir/big file.bin : Bad CRC, data corruption occurred
+Restoring file's data: /work/out2/my dir/sub
+Restoring file's FSA: /work/out2/my dir/sub
+Restoring file's data: /work/out2/my dir/sub/we ird: name.txt
+Restoring file's FSA: /work/out2/my dir/sub/we ird: name.txt
+
+
+ --------------------------------------------
+ 9 inode(s) restored
+    including 1 hard link(s)
+ 0 inode(s) not restored (not saved in archive)
+ 0 inode(s) not restored (overwriting policy decision)
+ 0 inode(s) ignored (excluded by filters)
+ 1 inode(s) failed to restore (filesystem error)
+ 0 inode(s) deleted
+ --------------------------------------------
+ Total number of inode(s) considered: 10
+ --------------------------------------------
+ EA restored for 0 inode(s)
+ FSA restored for 0 inode(s)
+ --------------------------------------------
+Aborting due to exception: All files asked could not be restored
+Final memory cleanup

@@ -46,6 +46,18 @@ func (b *Builder) validate() []error {
 		add("unsupported list format %q", string(b.listFormat))
 	}
 
+	if b.sliceHook != nil && *b.sliceHook == "" {
+		add("slice hook (-E): command is empty")
+	}
+	if b.refSliceHook != nil {
+		if *b.refSliceHook == "" {
+			add("reference slice hook (-F): command is empty")
+		}
+		if b.reference == "" {
+			add("the reference slice hook (-F) requires a reference archive")
+		}
+	}
+
 	hasFilter := false
 	for _, f := range b.filters() {
 		for _, v := range f.values {

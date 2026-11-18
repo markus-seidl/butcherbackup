@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os/exec"
 )
 
@@ -30,13 +31,18 @@ func (e *ExitError) Error() string {
 	return fmt.Sprintf("dar exited with status %d: %s", e.Code, e.Stderr)
 }
 
-// ExecRunner runs the program with os/exec.
-type ExecRunner struct{}
+// ExecRunner runs the program with os/exec. When Stdout or Stderr is set, the
+// output is also written there while the program runs; it is always captured
+// in the Result as well.
+type ExecRunner struct {
+	Stdout io.Writer
+	Stderr io.Writer
+}
 
-func (ExecRunner) Run(ctx context.Context, program string, args []string) (Result, error) {
+func (r ExecRunner) Run(ctx context.Context, program string, args []string) (Result, error) {
 	cmd := exec.CommandContext(ctx, program, args...)
 	var stdout, stderr bytes.Buffer
-	cmd.Stdout, cmd.Stderr = &stdout, &stderr
+	cmd.Stdout, cmd.Stderr = tee(&stdout, r.Stdout), tee(&stderr, r.Stderr)
 	err := cmd.Run()
 	res := Result{Stdout: stdout.String(), Stderr: stderr.String()}
 	var exitErr *exec.ExitError
@@ -65,4 +71,11 @@ func (c *Command) Run(ctx context.Context, runner Runner) (Result, error) {
 		return res, &ExitError{Code: res.ExitCode, Stderr: res.Stderr}
 	}
 	return res, nil
+}
+
+func tee(captured *bytes.Buffer, forward io.Writer) io.Writer {
+	if forward == nil {
+		return captured
+	}
+	return io.MultiWriter(captured, forward)
 }

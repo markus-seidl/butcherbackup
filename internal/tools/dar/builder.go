@@ -29,6 +29,8 @@ type Builder struct {
 	excludeMasks   []string
 	includePaths   []string
 	excludePaths   []string
+	sliceHook      *string
+	refSliceHook   *string
 }
 
 func NewBuilder() *Builder { return &Builder{} }
@@ -66,6 +68,19 @@ func (b *Builder) Verbose() *Builder                   { b.verbose = true; retur
 func (b *Builder) FirstSliceHeader() *Builder { b.firstSliceHdr = true; return b }
 
 func (b *Builder) Format(f ListFormat) *Builder { b.listFormat = f; return b }
+
+// ExecuteBetweenSlices sets -E: dar runs command (through a shell) whenever it
+// needs a slice. The string is passed unmodified, dar macros such as %n included.
+func (b *Builder) ExecuteBetweenSlices(command string) *Builder {
+	b.sliceHook = &command
+	return b
+}
+
+// ExecuteBetweenReferenceSlices sets -F, like -E but for the reference archive.
+func (b *Builder) ExecuteBetweenReferenceSlices(command string) *Builder {
+	b.refSliceHook = &command
+	return b
+}
 
 // IncludeMask adds -I masks: only files whose name matches are kept.
 func (b *Builder) IncludeMask(masks ...string) *Builder {
@@ -137,6 +152,12 @@ func (b *Builder) args() []string {
 		for _, v := range f.values {
 			args = append(args, f.flag, v)
 		}
+	}
+	if b.sliceHook != nil {
+		args = append(args, "-E", *b.sliceHook)
+	}
+	if b.refSliceHook != nil {
+		args = append(args, "-F", *b.refSliceHook)
 	}
 	return args
 }
