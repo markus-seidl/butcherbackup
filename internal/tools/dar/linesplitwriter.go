@@ -5,19 +5,19 @@ import (
 	"io"
 )
 
-// LineWriter turns written chunks into complete lines for a VerboseParser. Each
+// LineSplitWriter turns written chunks into complete lines for a VerboseParser. Each
 // writer keeps its own partial line, so give stdout and stderr one writer each.
-type LineWriter struct {
+type LineSplitWriter struct {
 	parser *VerboseParser
 	buf    []byte
 }
 
-var _ io.WriteCloser = (*LineWriter)(nil)
+var _ io.WriteCloser = (*LineSplitWriter)(nil)
 
 // NewWriter returns a writer that feeds the parser line by line.
-func (p *VerboseParser) NewWriter() *LineWriter { return &LineWriter{parser: p} }
+func (p *VerboseParser) NewWriter() *LineSplitWriter { return &LineSplitWriter{parser: p} }
 
-func (w *LineWriter) Write(data []byte) (int, error) {
+func (w *LineSplitWriter) Write(data []byte) (int, error) {
 	w.buf = append(w.buf, data...)
 	for {
 		i := bytes.IndexByte(w.buf, '\n')
@@ -31,7 +31,7 @@ func (w *LineWriter) Write(data []byte) (int, error) {
 }
 
 // Close parses a trailing line that has no newline.
-func (w *LineWriter) Close() error {
+func (w *LineSplitWriter) Close() error {
 	if len(w.buf) > 0 {
 		w.parser.ParseLine(string(w.buf))
 		w.buf = nil

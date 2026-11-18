@@ -75,7 +75,7 @@ func TestConcurrentWriters(t *testing.T) {
 		w.Close()
 	}
 	var files, errs strings.Builder
-	for i := 0; i < 200; i++ {
+	for range 200 {
 		files.WriteString("Adding file to archive: /data/file.txt\n")
 		errs.WriteString("Error while saving /data/file.txt: Permission denied\n")
 	}
@@ -84,7 +84,7 @@ func TestConcurrentWriters(t *testing.T) {
 	go feed(errs.String(), 7)
 	go func() {
 		defer wg.Done()
-		for i := 0; i < 200; i++ {
+		for range 200 {
 			p.CurrentFile()
 			p.Errors()
 		}
