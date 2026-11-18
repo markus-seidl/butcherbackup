@@ -1,4 +1,4 @@
-# dar-command Specification
+# dar-tool Specification
 
 ## Purpose
 Defines how butcherbackup describes a dar operation as a validated command line, runs it, follows its verbose output and reads slicing listings to learn which slices a restore needs.

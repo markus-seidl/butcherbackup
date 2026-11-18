@@ -30,4 +30,4 @@
 
 ## Workflow follow-up
 
-- On archive, sync creates `openspec/specs/dar-command` and retires `openspec/specs/dar-command-builder`; confirm `openspec validate --specs` passes and only `dar-command` remains.
+- On archive, sync creates `../../../specs/dar-tool` and retires `openspec/specs/dar-command-builder`; confirm `openspec validate --specs` passes and only `dar-command` remains.

@@ -27,5 +27,5 @@ None. `dar-command-builder` is retired by the rename: its delta removes all requ
 ## Impact
 
 - Code: `internal/tools/dar` gains hook options, runner stream forwarding, a verbose parser and a slicing parser, with tests and `testdata` fixtures. No change to other packages.
-- Specs: `openspec/specs/dar-command-builder` is removed and `openspec/specs/dar-command` is created at archive time.
+- Specs: `openspec/specs/dar-command-builder` is removed and `../../../specs/dar-tool` is created at archive time.
 - Dependencies: standard library only (`regexp`, `bufio`, `sync`).
